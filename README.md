@@ -10,6 +10,9 @@ source env/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
+
+# To deactivate virtual env
+deactivate
 ```
 
 ## Usage
@@ -19,9 +22,6 @@ python3 demo.py
 
 # Train the agent
 python3 agent.py
-
-# To deactivate virtual env
-deactivate
 ```
 
 ## Resources
