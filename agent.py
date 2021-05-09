@@ -38,6 +38,7 @@ class DQNAgent:
     self.decay = decay
     self.memory_size = memory_size 
     self.batch_size = batch_size
+    self.min_exp = min_exp
     self.target_update_freq = target_update_freq
 
     self.input_shape = self.env.observation_space.shape
