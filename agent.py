@@ -11,7 +11,7 @@ from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 from nes_py.wrappers import JoypadSpace
 
 from model import DQN
-from wrapperz import *
+from wrappers import *
 from experience_replay import ExperienceReplay, Experience
 import hyperparameters as hp
 
@@ -24,7 +24,7 @@ print(device)
 
 
 class DQNAgent:
-  def __init__(self, n_episodes=hp.N_EPISODES, alpha=hp.ALPHA, epsilon_start=hp.EPSILON_START, epsilon_final=hp.EPSILON_FINAL, gamma=hp.GAMMA, decay=hp.DECAY, memory_size=hp.MEMORY_SIZE, batch_size=hp.BATCH_SIZE, target_update_freq=hp.TARGET_UPDATE_FREQ):
+  def __init__(self, n_episodes=hp.N_EPISODES, alpha=hp.ALPHA, epsilon_start=hp.EPSILON_START, epsilon_final=hp.EPSILON_FINAL, gamma=hp.GAMMA, decay=hp.DECAY, memory_size=hp.MEMORY_SIZE, batch_size=hp.BATCH_SIZE, min_exp=hp.MIN_EXP, target_update_freq=hp.TARGET_UPDATE_FREQ):
     self.env = gym_super_mario_bros.make("SuperMarioBros-v0")
     self.env = JoypadSpace(self.env, COMPLEX_MOVEMENT)
     self.env = wrap_mario(self.env)
@@ -139,7 +139,7 @@ class DQNAgent:
 
         # Choose A from S
         action = self.select_action(current_state)
-        self.env.render()
+        #self.env.render()
         
         next_state, reward, done, info = self.env.step(action)
         next_state = np.moveaxis(np.array(next_state), 2, 0)
@@ -156,7 +156,7 @@ class DQNAgent:
         self.replay_memory.push(experience)
         current_state = next_state 
 
-        if (self.replay_memory.length() < 10000):
+        if (self.replay_memory.length() < self.min_exp):
           continue
         
         if (step_index % self.target_update_freq) == 0:
