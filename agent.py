@@ -24,22 +24,22 @@ print(device)
 
 
 class DQNAgent:
-  def __init__(self, n_episodes=hp.N_EPISODES, alpha=hp.ALPHA, epsilon_start=hp.EPSILON_START, epsilon_final=hp.EPSILON_FINAL, gamma=hp.GAMMA, decay=hp.DECAY, memory_size=hp.MEMORY_SIZE, batch_size=hp.BATCH_SIZE, min_exp=hp.MIN_EXP, target_update_freq=hp.TARGET_UPDATE_FREQ):
-    self.env = gym_super_mario_bros.make("SuperMarioBros-v0")
+  def __init__(self):
+    self.env = gym_super_mario_bros.make("SuperMarioBros-1-1-v0")
     self.env = JoypadSpace(self.env, COMPLEX_MOVEMENT)
     self.env = wrap_mario(self.env)
   
-    self.n_episodes = n_episodes
-    self.alpha = alpha
-    self.epsilon_start = epsilon_start
-    self.epsilon_final = epsilon_final
-    self.epsilon = epsilon_start 
-    self.gamma = gamma
-    self.decay = decay
-    self.memory_size = memory_size 
-    self.batch_size = batch_size
-    self.min_exp = min_exp
-    self.target_update_freq = target_update_freq
+    self.n_episodes = hp.N_EPISODES 
+    self.alpha = hp.ALPHA 
+    self.epsilon_start = hp.EPSILON_START 
+    self.epsilon_final = hp.EPSILON_FINAL 
+    self.epsilon = hp.EPSILON_START
+    self.gamma = hp.GAMMA 
+    self.decay = hp.DECAY 
+    self.memory_size = hp.MEMORY_SIZE 
+    self.batch_size = hp.BATCH_SIZE 
+    self.min_exp = hp.MIN_EXP 
+    self.target_update_freq = hp.TARGET_UPDATE_FREQ 
 
     self.input_shape = self.env.observation_space.shape
     self.n_actions = self.env.action_space.n
