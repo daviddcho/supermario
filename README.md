@@ -1,4 +1,6 @@
-# Dependencies 
+# Super Mario Bros
+
+## Dependencies 
 ```
 # Create virtual environment 
 python3 -m venv env
@@ -10,7 +12,7 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
-# Usage
+## Usage
 ```
 # Watch it play 
 python3 demo.py
@@ -22,5 +24,6 @@ python3 agent.py
 deactivate
 ```
 
-# Resources
-
+## Resources
+* [Playing Atari with Deep Reinforcement Learning](https://arxiv.org/abs/1312.5602)
+* [Deep Reinforcement Learning with Double Q-learning](https://arxiv.org/abs/1509.06461)
