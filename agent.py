@@ -3,6 +3,7 @@ import torch.nn as nn
 import cv2
 import math
 import numpy as np
+import time
 from tqdm import tqdm
 
 import gym_super_mario_bros
@@ -12,34 +13,21 @@ from nes_py.wrappers import JoypadSpace
 from model import DQN
 from wrapperz import *
 from experience_replay import ExperienceReplay, Experience
+import hyperparameters as hp
 
-import time
-
-N_EPISODES = 40000
-ALPHA = 0.00025 #1e-4
-EPSILON_START = 1.0 
-EPSILON_FINAL = 0.01
-DECAY = 10**6
-GAMMA = 0.99
-MEMORY_SIZE = 30000 
-BATCH_SIZE = 32
-TARGET_UPDATE_FREQ = 1000
-LOAD = True
 
 if torch.cuda.is_available():
   device = "cuda"
 else: 
   device = "cpu"
-
 print(device)
 
-class DQNAgent:
 
-  def __init__(self, n_episodes=N_EPISODES, alpha=ALPHA, epsilon_start=EPSILON_START, epsilon_final=EPSILON_FINAL, gamma=GAMMA, decay=DECAY, memory_size=MEMORY_SIZE, batch_size=BATCH_SIZE, target_update_freq=TARGET_UPDATE_FREQ):
+class DQNAgent:
+  def __init__(self, n_episodes=hp.N_EPISODES, alpha=hp.ALPHA, epsilon_start=hp.EPSILON_START, epsilon_final=hp.EPSILON_FINAL, gamma=hp.GAMMA, decay=hp.DECAY, memory_size=hp.MEMORY_SIZE, batch_size=hp.BATCH_SIZE, target_update_freq=hp.TARGET_UPDATE_FREQ):
     self.env = gym_super_mario_bros.make("SuperMarioBros-v0")
     self.env = JoypadSpace(self.env, COMPLEX_MOVEMENT)
     self.env = wrap_mario(self.env)
-    #self.env = make_env('SuperMarioBros-v0')
   
     self.n_episodes = n_episodes
     self.alpha = alpha
@@ -63,7 +51,7 @@ class DQNAgent:
     self.target_model = DQN(self.input_shape, self.n_actions).to(device)
 
     # if you want to load and watch
-    if LOAD:
+    if hp.LOAD:
       self.model.load_state_dict(torch.load("pretrained_models/pretrained_39900_model.pth"))
       self.target_model.load_state_dict(self.model.state_dict())
       self.epsilon_start = self.epsilon_final
