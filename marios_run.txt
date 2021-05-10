@@ -1,4 +1,0 @@
-episode:0/400000 total_steps:176 total_frames:704 total_reward:28 distance:131 epsilon:0.99982 game_time:365 batch_size=32 memory_size:40000
-episode:0/400000 total_steps:2004 total_frames:8016 total_reward:265 distance:722 epsilon:0.99802 game_time:0 batch_size=32 memory_size:40000
-episode:0/400000 total_steps:108 total_frames:432 total_reward:201 distance:281 epsilon:0.99989 game_time:378 batch_size=32 memory_size:40000
-episode:1/400000 total_steps:692 total_frames:2768 total_reward:-85 distance:154 epsilon:0.99931 game_time:283 batch_size=32 memory_size:40000
