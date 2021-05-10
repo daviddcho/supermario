@@ -43,9 +43,6 @@ class DQNAgent:
 
     self.input_shape = self.env.observation_space.shape
     self.n_actions = self.env.action_space.n
-
-    self.input_shape = (4, 84, 84)
-
     print(self.input_shape, self.n_actions)
     
     self.model = DQN(self.input_shape, self.n_actions).to(device)
@@ -126,9 +123,8 @@ class DQNAgent:
       total_reward = 0
       distance = 0
       # Start
-      #current_state = self.process(self.env.reset())
       current_state = self.env.reset()
-      current_state = np.moveaxis(np.array(current_state), 2, 0)
+      print(np.array(current_state).shape)
 
       done = False 
       while not done:
@@ -142,7 +138,6 @@ class DQNAgent:
         #self.env.render()
         
         next_state, reward, done, info = self.env.step(action)
-        next_state = np.moveaxis(np.array(next_state), 2, 0)
         # This is for logging data
         total_reward += reward 
         distance = max(info['x_pos'], distance)

@@ -222,15 +222,15 @@ class ImageToPyTorch(gym.ObservationWrapper):
   """
   """
   def __init__(self, env):
-    super(ImageToPyTorch, self).__init__(env)
+    gym.ObservationWrapper.__init__(self, env)
     obs_shape = self.observation_space.shape
-    # Basically reversing the obs_shape
+    # Reversing the obs_shape
     self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(obs_shape[::-1]), dtype=np.float32)
 
-    def observation(self, observation):
-      # The second position of axis is moved to the first
-      # Basically from shape (84, 84, 1) -> (1, 84, 84)
-      return np.moveaxis(observation, 2, 0)
+  def observation(self, observation):
+    # The second position of axis is moved to the first
+    # Basically from shape (84, 84, 1) -> (1, 84, 84)
+    return np.moveaxis(observation, 2, 0)
 
 
 class ScaledFloatFrame(gym.ObservationWrapper):
@@ -324,8 +324,8 @@ def wrap_mario(env):
     env = EpisodicLifeMario(env)
     env = WarpFrame(env)
     env = ScaledFloatFrame(env)
-    #env = ImageToPyTorch(env)
     env = FrameStack(env, 4)
+    env = ImageToPyTorch(env)
     return env
 
 
