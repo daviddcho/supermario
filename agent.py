@@ -68,7 +68,6 @@ class DQNAgent:
     """
     states, actions, rewards, next_states, dones = minibatch
     
-    
     states = torch.tensor(states).to(device) 
     next_states = torch.tensor(next_states).to(device)
     actions = torch.tensor(actions).to(device) 

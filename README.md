@@ -1,5 +1,7 @@
 # Super Mario Bros
 
+An implementation of a Double Deep Q Network to learn to play Super Mario Bros.
+
 ## Dependencies 
 ```
 # Create virtual environment 
