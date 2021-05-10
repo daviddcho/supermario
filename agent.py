@@ -171,7 +171,7 @@ class DQNAgent:
           minibatch = self.replay_memory.sample_batch(self.batch_size)
           self.compute_loss(minibatch, device)
 
-      if (episode % 100) == 0:
+      if (episode % 10000) == 0 and episode != 0:
         torch.save(self.model.state_dict(), "pretrained_%d_model.pth" % episode)
       # Log data
       self.write_log(episode, self.n_episodes, step_index, total_reward, distance, self.epsilon, game_time, self.batch_size, self.memory_size)
