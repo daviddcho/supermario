@@ -13,6 +13,10 @@ import cv2
 cv2.ocl.setUseOpenCL(False)
 from gym.wrappers import TimeLimit
 
+import gym_super_mario_bros
+from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
+from nes_py.wrappers import JoypadSpace
+
 
 class NoopResetEnv(gym.Wrapper):
     def __init__(self, env, noop_max=30):
@@ -318,15 +322,18 @@ class EpisodicLifeMario(gym.Wrapper):
 
 
 
-def wrap_mario(env):
-    env = NoopResetEnv(env, noop_max=30)
-    env = MaxAndSkipEnv(env, skip=4)
-    env = EpisodicLifeMario(env)
-    env = WarpFrame(env)
-    env = ScaledFloatFrame(env)
-    env = FrameStack(env, 4)
-    env = ImageToPyTorch(env)
-    return env
+def make_mario(env_id, movement):
+  env = gym_super_mario_bros.make(env_id)
+  env = JoypadSpace(env, movement)
+  # Wrap the env 
+  env = NoopResetEnv(env, noop_max=30)
+  env = MaxAndSkipEnv(env, skip=4)
+  env = EpisodicLifeMario(env)
+  env = WarpFrame(env)
+  env = ScaledFloatFrame(env)
+  env = FrameStack(env, 4)
+  env = ImageToPyTorch(env)
+  return env
 
 
 """

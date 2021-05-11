@@ -6,9 +6,12 @@ import numpy as np
 import time
 from tqdm import tqdm
 
+
 import gym_super_mario_bros
+"""
 from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 from nes_py.wrappers import JoypadSpace
+"""
 
 from model import DQN
 from wrappers import *
@@ -25,9 +28,7 @@ print(device)
 
 class DQNAgent:
   def __init__(self):
-    self.env = gym_super_mario_bros.make("SuperMarioBros-1-1-v0")
-    self.env = JoypadSpace(self.env, COMPLEX_MOVEMENT)
-    self.env = wrap_mario(self.env)
+    self.env = make_mario("SuperMarioBros-1-1-v0", COMPLEX_MOVEMENT)
   
     self.n_episodes = hp.N_EPISODES 
     self.alpha = hp.ALPHA 
