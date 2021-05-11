@@ -6,25 +6,13 @@ import numpy as np
 import time
 from tqdm import tqdm
 
-
-import gym_super_mario_bros
-"""
-from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
-from nes_py.wrappers import JoypadSpace
-"""
-
 from model import DQN
 from wrappers import *
 from experience_replay import ExperienceReplay, Experience
 import hyperparameters as hp
 
-
-if torch.cuda.is_available():
-  device = "cuda"
-else: 
-  device = "cpu"
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(device)
-
 
 class DQNAgent:
   def __init__(self):
@@ -45,7 +33,7 @@ class DQNAgent:
     self.input_shape = self.env.observation_space.shape
     self.n_actions = self.env.action_space.n
     print(self.input_shape, self.n_actions)
-    
+
     self.model = DQN(self.input_shape, self.n_actions).to(device)
     self.target_model = DQN(self.input_shape, self.n_actions).to(device)
 
@@ -88,7 +76,7 @@ class DQNAgent:
     
   def select_action(self, state): 
     """
-    epsilon-greedy
+    Epsilon-greedy policy
     """
     if np.random.random() < self.epsilon:
       action = self.env.action_space.sample()
