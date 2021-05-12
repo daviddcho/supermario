@@ -9,6 +9,7 @@ from tqdm import tqdm
 from model import DQN
 from wrappers import *
 from experience_replay import ExperienceReplay, Experience
+from logger import Logger
 import hyperparameters as hp
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -46,7 +47,8 @@ class DQNAgent:
 
     self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.alpha)
     self.replay_memory = ExperienceReplay(self.memory_size)
-  
+
+    self.logger = Logger()
    
   def update_model(self, minibatch):
     """
@@ -69,19 +71,18 @@ class DQNAgent:
 
     # Sets the gradients to zero before backprop so gradients dont accumulate?
     self.optimizer.zero_grad() 
-    
-    # Calculate target
-    td_target = next_q_value * self.gamma + rewards
+
     # Perform stochastic gradient descent
+    td_target = next_q_value * self.gamma + rewards
     loss = nn.MSELoss()(q_value, td_target)
     loss.backward() 
     self.optimizer.step() 
 
-    #return q_value, loss.item()
+    return q_value, loss.item()
     
   def select_action(self, state): 
     """
-    Epsilon-greedy policy
+    Picks action with epsilon-greedy policy
     """
     if np.random.random() < self.epsilon:
       action = self.env.action_space.sample()
@@ -100,7 +101,7 @@ class DQNAgent:
     
   def train(self):
     """
-    Deep Q-Learning with Experience Replay
+    Deep Double Q-Learning with Experience Replay
     """
     step_index = 0
     for episode in tqdm(range(self.n_episodes)):
@@ -119,13 +120,10 @@ class DQNAgent:
         action = self.select_action(current_state)
         next_state, reward, done, info = self.env.step(action)
         
-        #distance = max(info['x_pos'], distance)
-        #self.logger.log_step(reward, distance)
-
         experience = Experience(current_state, action, reward, next_state, done)
         self.replay_memory.push(experience)
-
         current_state = next_state 
+
         if (self.replay_memory.length() < self.min_exp):
           continue
 
@@ -135,10 +133,18 @@ class DQNAgent:
 
         if (step_index % 4) == 0:
           minibatch = self.replay_memory.sample_batch(self.batch_size)
-          self.update_model(minibatch)
+          q_value, loss = self.update_model(minibatch)
+        else:
+          q_value, loss = None, None
+
+        distance = max(info['x_pos'], distance)
+        self.logger.log_step(reward, distance, q_value, loss)
         
       if (episode % 10000) == 0 and episode != 0:
         torch.save(self.model.state_dict(), "model_%d.pth" % episode)
+      self.logger.log_episode()
+    
+    self.logger.record()
 
 
 agent = DQNAgent()
