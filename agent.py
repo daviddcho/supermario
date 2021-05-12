@@ -102,6 +102,7 @@ class DQNAgent:
     """
     Deep Q-Learning with Experience Replay
     """
+    step_index = 0
     for episode in tqdm(range(self.n_episodes)):
       distance = 0
 
@@ -112,6 +113,7 @@ class DQNAgent:
         #time.sleep(0.05)
         #self.env.render()
 
+        step_index += 1
         self.epsilon = self.get_epsilon(step_index)
 
         action = self.select_action(current_state)
