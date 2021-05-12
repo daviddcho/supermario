@@ -149,20 +149,16 @@ class DQNAgent:
     """
     When you want to watch Mario play
     """
-    step_index = 0
+    self.epsilon = self.get_epsilon(1)
     current_state = self.env.reset()
     done = False
     while not done:    
       time.sleep(0.04)
       self.env.render() 
-
-      step_index += 1 
-      self.epsilon = self.get_epsilon(step_index)
-
       action = self.select_action(current_state) 
       next_state, reward, done, _ = self.env.step(action)
       current_state = next_state
 
 agent = DQNAgent()
-agent.train()
-#agent.run()
+#agent.train()
+agent.run()
