@@ -10,7 +10,7 @@ class Logger():
     self.ep_avg_qs = []
 
     self.init_episode()
-    self.time = time.time()
+    self.start_time = time.time()
   
   def init_episode(self):
     self.ep_reward = 0.0
@@ -21,10 +21,10 @@ class Logger():
   
   def log_step(self, reward, distance, loss, q):
     self.ep_reward += reward
-    self.ep_distance += distance 
+    self.ep_distance = distance 
     if loss:
       self.ep_loss += loss 
-      self.loss_num += 1
+      self.ep_loss_num += 1
       self.ep_q += q 
 
   def log_episode(self):
@@ -39,18 +39,21 @@ class Logger():
     self.ep_avg_losses.append(avg_loss)
     self.ep_avg_qs.append(avg_q)
 
+    self.init_episode()
+
     print("Rewards", self.ep_rewards)
     print("Distances", self.ep_distances)
     print("Avg losses", self.ep_avg_losses) 
     print("Avg qs", self.ep_avg_qs)
-    print(self.time)
-
+    
   def record(self):
-    logs = [self.ep_rewards, self.ep_distances, 
-           self.ep_avg_losses, self.ep_avg_qs]
+    logs = [self.ep_rewards, self.ep_distances, self.ep_avg_losses, self.ep_avg_qs]
     filename = "data/log.pkl"
     with open(filename, 'wb') as wfp:
       pickle.dump(log, wfp)
+
+    t = time.time() - self.start_time
+    print("Total training time: ", time.strftime("%H:%M:%S", time.gmtime(t)))
 
 """
 TODO:

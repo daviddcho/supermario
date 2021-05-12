@@ -78,7 +78,7 @@ class DQNAgent:
     loss.backward() 
     self.optimizer.step() 
 
-    return q_value, loss.item()
+    return q_value.mean().item(), loss.item()
     
   def select_action(self, state): 
     """
