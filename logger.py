@@ -1,7 +1,6 @@
 import pickle
 import time
 
-
 class Logger():
   def __init__(self, n_episodes, epsilon, memory_size, batch_size):
     self.params = [n_episodes, epsilon, memory_size, batch_size]
@@ -41,11 +40,6 @@ class Logger():
     self.ep_avg_qs.append(avg_q)
 
     self.init_episode()
-
-    print("Rewards", self.ep_rewards)
-    print("Distances", self.ep_distances)
-    print("Avg losses", self.ep_avg_losses) 
-    print("Avg qs", self.ep_avg_qs)
     
   def record(self):
     logs = [self.params, self.ep_rewards, self.ep_distances, self.ep_avg_losses, self.ep_avg_qs]

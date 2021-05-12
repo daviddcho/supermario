@@ -48,7 +48,7 @@ class DQNAgent:
     self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.alpha)
     self.replay_memory = ExperienceReplay(self.memory_size)
 
-    self.logger = Logger(self.n_episodes, n.epsilon_start, n.memory_size, n.batch_size)
+    self.logger = Logger(self.n_episodes, self.epsilon_start, self.memory_size, self.batch_size)
    
   def update_model(self, minibatch):
     """
@@ -113,7 +113,6 @@ class DQNAgent:
         # you want a separate run for this
         #time.sleep(0.05)
         #self.env.render()
-
         step_index += 1
         self.epsilon = self.get_epsilon(step_index)
 
@@ -146,6 +145,24 @@ class DQNAgent:
     
     self.logger.record()
 
+  def run(self):
+    """
+    When you want to watch Mario play
+    """
+    step_index = 0
+    current_state = self.env.reset()
+    done = False
+    while not done:    
+      time.sleep(0.04)
+      self.env.render() 
+
+      step_index += 1 
+      self.epsilon = self.get_epsilon(step_index)
+
+      action = self.select_action(current_state) 
+      next_state, reward, done, _ = self.env.step(action)
+      current_state = next_state
 
 agent = DQNAgent()
 agent.train()
+#agent.run()
