@@ -3,7 +3,8 @@ import time
 
 
 class Logger():
-  def __init__(self):
+  def __init__(self, n_episodes, epsilon, memory_size, batch_size):
+    self.params = [n_episodes, epsilon, memory_size, batch_size]
     self.ep_rewards = []
     self.ep_distances = []
     self.ep_avg_losses = []
@@ -47,7 +48,7 @@ class Logger():
     print("Avg qs", self.ep_avg_qs)
     
   def record(self):
-    logs = [self.ep_rewards, self.ep_distances, self.ep_avg_losses, self.ep_avg_qs]
+    logs = [self.params, self.ep_rewards, self.ep_distances, self.ep_avg_losses, self.ep_avg_qs]
     filename = "data/log.pkl"
     with open(filename, 'wb') as wfp:
       pickle.dump(log, wfp)

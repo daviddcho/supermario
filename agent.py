@@ -48,7 +48,7 @@ class DQNAgent:
     self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.alpha)
     self.replay_memory = ExperienceReplay(self.memory_size)
 
-    self.logger = Logger()
+    self.logger = Logger(self.n_episodes, n.epsilon_start, n.memory_size, n.batch_size)
    
   def update_model(self, minibatch):
     """
