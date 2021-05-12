@@ -48,7 +48,7 @@ class DQNAgent:
     self.replay_memory = ExperienceReplay(self.memory_size)
   
    
-  def compute_loss(self, minibatch, device):
+  def compute_loss(self, minibatch):
     """
     Calculate Mean Square Error (MSE) between actual values and expected values from Deep Q-Network
     """
@@ -68,9 +68,11 @@ class DQNAgent:
 
     # Sets the gradients to zero before backprop so gradients dont accumulate?
     self.optimizer.zero_grad() 
-
+    
+    # Calculate target
     td_target = next_q_value * self.gamma + rewards
     loss = nn.MSELoss()(q_value, td_target)
+    # (Update weights) Perform stochastic gradient descent?
     loss.backward() # Back Propagation 
     self.optimizer.step() # Gradient Descent? 
     
@@ -84,7 +86,6 @@ class DQNAgent:
       # Pick best action with DQN 
       state = torch.FloatTensor(np.float32(state)).unsqueeze(0).to(device)
       q_value = self.model(state)
-      #print(q_value.max(1))
       action = q_value.max(1)[1].item()
     return action
 
@@ -119,7 +120,6 @@ class DQNAgent:
       while not done:
         #time.sleep(0.05)
         step_index += 1
-        # Do we reset the epsilon back to start after every episode?
         self.epsilon = self.get_epsilon(step_index)
 
         # Choose A from S
@@ -130,10 +130,7 @@ class DQNAgent:
         # This is for logging data
         total_reward += reward 
         distance = max(info['x_pos'], distance)
-        #print(distance)
         game_time = info['time']
-
-        #print(next_state, next_state.shape)
 
         # Store step information in replay memory 
         experience = Experience(current_state, action, reward, next_state, done)
@@ -146,21 +143,18 @@ class DQNAgent:
         if (step_index % self.target_update_freq) == 0:
           self.target_model.load_state_dict(self.model.state_dict())
         
-        # Sample random minibatch of transitions from replay memory
-        # Calculate the target
-        # (Update weights) Perform stochastic gradient descent
-        
         # Update every 4 steps
         if (step_index % 4) == 0:
+          # Sample random minibatch of transitions from replay memory
           minibatch = self.replay_memory.sample_batch(self.batch_size)
-          self.compute_loss(minibatch, device)
+          self.compute_loss(minibatch)
 
       if (episode % 10000) == 0 and episode != 0:
         torch.save(self.model.state_dict(), "pretrained_%d_model.pth" % episode)
+
       # Log data
       self.write_log(episode, self.n_episodes, step_index, total_reward, distance, self.epsilon, game_time, self.batch_size, self.memory_size)
   
 
 agent = DQNAgent()
 agent.train()
-#agent.run()

@@ -2,7 +2,7 @@
 
 An implementation of a Double Deep Q Network to learn to play Super Mario Bros.
 
-## Dependencies 
+## Set Up 
 ```
 # Create virtual environment 
 python3 -m venv env
