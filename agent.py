@@ -48,9 +48,10 @@ class DQNAgent:
     self.replay_memory = ExperienceReplay(self.memory_size)
   
    
-  def compute_loss(self, minibatch):
+  def update_model(self, minibatch):
     """
     Calculate Mean Square Error (MSE) between actual values and expected values from Deep Q-Network
+    Then perform stochasitc gradient descent
     """
     states, actions, rewards, next_states, dones = minibatch
     
@@ -71,10 +72,12 @@ class DQNAgent:
     
     # Calculate target
     td_target = next_q_value * self.gamma + rewards
+    # Perform stochastic gradient descent
     loss = nn.MSELoss()(q_value, td_target)
-    # (Update weights) Perform stochastic gradient descent?
-    loss.backward() # Back Propagation 
-    self.optimizer.step() # Gradient Descent? 
+    loss.backward() 
+    self.optimizer.step() 
+
+    #return q_value, loss.item()
     
   def select_action(self, state): 
     """
@@ -91,70 +94,50 @@ class DQNAgent:
 
   def get_epsilon(self, t):
     """
-    Returns value of epsilon. Epsilon declines as we advance in time? or episode? 
+    Returns value of epsilon. Epsilon declines as we advance in steps
     """
     return self.epsilon_final + (self.epsilon_start - self.epsilon_final) * math.exp(-1 * ((t + 1) / self.decay))
-    
-  def write_log(self, episode, n_episodes, total_steps, total_reward, distance, epsilon, game_time, batch_size, memory_size):
-    #print(episode, n_episodes, total_reward, distance, epsilon, game_time, memory_size)
-    total_frames = 4*total_steps
-    with open("marios_run.txt", "a") as file:
-      file.write("episode:%d/%d total_steps:%d total_frames:%d total_reward:%d distance:%d epsilon:%.5f game_time:%d batch_size=%d memory_size:%d\n" % 
-                (episode, n_episodes, total_steps, total_frames, total_reward, distance, epsilon, game_time, batch_size, memory_size))
     
   def train(self):
     """
     Deep Q-Learning with Experience Replay
     """
-    step_index = 0
     for episode in tqdm(range(self.n_episodes)):
-      # For logging data
-      game_time = 0
-      total_reward = 0
       distance = 0
-      # Start
-      current_state = self.env.reset()
-      print(np.array(current_state).shape)
 
+      current_state = self.env.reset()
       done = False 
       while not done:
+        # you want a separate run for this
         #time.sleep(0.05)
-        step_index += 1
+        #self.env.render()
+
         self.epsilon = self.get_epsilon(step_index)
 
-        # Choose A from S
         action = self.select_action(current_state)
-        #self.env.render()
-        
         next_state, reward, done, info = self.env.step(action)
-        # This is for logging data
-        total_reward += reward 
-        distance = max(info['x_pos'], distance)
-        game_time = info['time']
+        
+        #distance = max(info['x_pos'], distance)
+        #self.logger.log_step(reward, distance)
 
-        # Store step information in replay memory 
         experience = Experience(current_state, action, reward, next_state, done)
         self.replay_memory.push(experience)
-        current_state = next_state 
 
+        current_state = next_state 
         if (self.replay_memory.length() < self.min_exp):
           continue
-        
+
+        # Sync target with main 
         if (step_index % self.target_update_freq) == 0:
           self.target_model.load_state_dict(self.model.state_dict())
-        
-        # Update every 4 steps
+
         if (step_index % 4) == 0:
-          # Sample random minibatch of transitions from replay memory
           minibatch = self.replay_memory.sample_batch(self.batch_size)
-          self.compute_loss(minibatch)
-
+          self.update_model(minibatch)
+        
       if (episode % 10000) == 0 and episode != 0:
-        torch.save(self.model.state_dict(), "pretrained_%d_model.pth" % episode)
+        torch.save(self.model.state_dict(), "model_%d.pth" % episode)
 
-      # Log data
-      self.write_log(episode, self.n_episodes, step_index, total_reward, distance, self.epsilon, game_time, self.batch_size, self.memory_size)
-  
 
 agent = DQNAgent()
 agent.train()
