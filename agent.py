@@ -114,9 +114,6 @@ class DQNAgent:
       current_state = self.env.reset()
       done = False 
       while not done:
-        # you want a separate run for this
-        #time.sleep(0.05)
-        #self.env.render()
         step += 1
         self.epsilon = self.get_epsilon(step)
 
@@ -149,7 +146,7 @@ class DQNAgent:
         self.logger.record(episode, self.epsilon, step) 
     
 
-  def run(self):
+  def play(self):
     """
     When you want to watch Mario play
     """
@@ -165,4 +162,4 @@ class DQNAgent:
 
 agent = DQNAgent()
 agent.train()
-#agent.run()
+#agent.play()
