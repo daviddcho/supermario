@@ -30,4 +30,4 @@ python3 agent.py
 * Playing Atari with Deep Reinforcement Learning: https://arxiv.org/abs/1312.5602
 * Deep Reinforcement Learning with Double Q-learning: https://arxiv.org/abs/1509.06461
 * Neural Networks from 3Blue1Brown: https://youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi 
-* Understanding Convolutions: https://colah.github.io/posts/2014-07-Understanding-Convolutions/ 
+* Conv Nets: A Modular Perspective: https://colah.github.io/posts/2014-07-Conv-Nets-Modular/
