@@ -56,12 +56,13 @@ class Logger():
     mean_ep_avg_loss = np.round(np.mean(self.ep_avg_losses[-n:]), 3) 
     mean_ep_avg_q = np.round(np.mean(self.ep_avg_qs[-n:]), 3)
     self.mean_ep_rewards.append(mean_ep_reward)
-    self.mean_ep_distance.append(mean_ep_distance)
+    self.mean_ep_distances.append(mean_ep_distance)
     self.mean_ep_avg_losses.append(mean_ep_avg_loss)
     self.mean_ep_avg_qs.append(mean_ep_avg_q)
 
     t = time.time() - self.start_time
-    print("Total training time: ", time.strftime("%H:%M:%S", time.gmtime(t)))
+    tf = time.strftime("%H:%M:%S", time.gmtime(t))
+    print("Total training time: ", tf)
     
     # Long term?
     log = [self.ep_rewards, self.ep_distances, self.ep_avg_losses, self.ep_avg_qs]
@@ -71,18 +72,21 @@ class Logger():
 
     # And just to see
     with open("data/updatelog", "a") as fp:
-      f.write(
-        f"{episode:8d}{step:8d}{epsilon:8d}"
-        f"{mean_ep_reward:12f}{mean_ep_distance:12f}{mean_ep_avg_loss:12f}{mean_ep_avg_q:12f}"
-        f"{t:12}"
+      fp.write(
+        f"{episode:8d}{step:8d}{epsilon:8.3f}"
+        f"{mean_ep_reward:12.3f}{mean_ep_distance:12.3f}{mean_ep_avg_loss:12.3f}{mean_ep_avg_q:12.3f}"
+        f"{tf:>12}\n"
       )
     
     self.plot(n)
 
   def plot(self, n):
-    for metric in ["ep_rewards", "ep_distance", "ep_avg_losses", "ep_avg_qs"]:
-      plt.plot(getattr(self, f"mean_{metrix}"), [i*n for i in range(1, len(self.mean_ep_rewards))])
-      plt.savefig(getattr(self, f"{metric}_plot"))
+    eps = [i*n for i in range(1, len(self.mean_ep_rewards)+1)]
+    for metric in ["ep_rewards", "ep_distances", "ep_avg_losses", "ep_avg_qs"]:
+      plt.plot(eps, getattr(self, f"mean_{metric}"))
+      plt.xlabel(f"episodes")
+      plt.ylabel(f"mean {metric}")
+      plt.savefig(f"data/{metric}_plot.png")
       plt.clf()
 
 """

@@ -141,8 +141,8 @@ class DQNAgent:
         self.logger.log_step(reward, distance, q_value, loss)
         
       self.logger.log_episode()
-      if (episode % 10000) == 0 and episode != 0:
-        torch.save(self.model.state_dict(), "model_%d.pth" % episode)
+      if (episode % self.target_update_freq) == 0 and episode != 0:
+        torch.save(self.model.state_dict(), "pretrained_models/model_%d.pth" % episode)
         self.logger.record(episode, self.epsilon, step) 
     
 
