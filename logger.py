@@ -1,7 +1,9 @@
 import pickle
 import matplotlib.pyplot as plt
+import numpy as np
 import time
 from hyperparameters import TARGET_UPDATE_FREQ 
+     
 
 class Logger():
   def __init__(self):
@@ -14,7 +16,6 @@ class Logger():
     self.mean_ep_distances = []
     self.mean_ep_avg_losses = []
     self.mean_ep_avg_qs = []
-
 
     self.init_episode()
     self.start_time = time.time()

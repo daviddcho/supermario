@@ -65,7 +65,8 @@ class DQNAgent:
 
     q_values = self.model(states)
     next_q_values = self.target_model(next_states)
-
+    
+    # look into this
     q_value = q_values.gather(1, actions.long().unsqueeze(-1)).squeeze(-1)
     next_q_value = next_q_values.max(1)[0] 
 
@@ -78,9 +79,9 @@ class DQNAgent:
     loss.backward() 
     self.optimizer.step() 
     
-    print("Q value", q_value) 
-    print("loss", loss) 
-    print(q_value.mean().item(), loss.item())
+    #print("Q value", q_value) 
+    #print("loss", loss) 
+    #print(q_value.mean().item(), loss.item())
     return q_value.mean().item(), loss.item()
     
   def select_action(self, state): 
