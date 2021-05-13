@@ -1,13 +1,20 @@
 import pickle
+import matplotlib.pyplot as plt
 import time
+from hyperparameters import TARGET_UPDATE_FREQ 
 
 class Logger():
-  def __init__(self, n_episodes, epsilon, memory_size, batch_size):
-    self.params = [n_episodes, epsilon, memory_size, batch_size]
+  def __init__(self):
     self.ep_rewards = []
     self.ep_distances = []
     self.ep_avg_losses = []
     self.ep_avg_qs = []
+    
+    self.mean_ep_rewards = []
+    self.mean_ep_distances = []
+    self.mean_ep_avg_losses = []
+    self.mean_ep_avg_qs = []
+
 
     self.init_episode()
     self.start_time = time.time()
@@ -38,21 +45,48 @@ class Logger():
       avg_q = self.ep_q/self.ep_loss_num
     self.ep_avg_losses.append(avg_loss)
     self.ep_avg_qs.append(avg_q)
-
+    # Reset
     self.init_episode()
     
-  def record(self):
-    logs = [self.params, self.ep_rewards, self.ep_distances, self.ep_avg_losses, self.ep_avg_qs]
+  def record(self, episode, epsilon, step):
+    n = TARGET_UPDATE_FREQ
+    mean_ep_reward = np.round(np.mean(self.ep_rewards[-n:]), 3)
+    mean_ep_distance = np.round(np.mean(self.ep_distances[-n:]), 3)
+    mean_ep_avg_loss = np.round(np.mean(self.ep_avg_losses[-n:]), 3) 
+    mean_ep_avg_q = np.round(np.mean(self.ep_avg_qs[-n:]), 3)
+    self.mean_ep_rewards.append(mean_ep_reward)
+    self.mean_ep_distance.append(mean_ep_distance)
+    self.mean_ep_avg_losses.append(mean_ep_avg_loss)
+    self.mean_ep_avg_qs.append(mean_ep_avg_q)
+
+    t = time.time() - self.start_time
+    print("Total training time: ", time.strftime("%H:%M:%S", time.gmtime(t)))
+    
+    # Long term?
+    log = [self.ep_rewards, self.ep_distances, self.ep_avg_losses, self.ep_avg_qs]
     filename = "data/log.pkl"
     with open(filename, 'wb') as wfp:
       pickle.dump(log, wfp)
 
-    t = time.time() - self.start_time
-    print("Total training time: ", time.strftime("%H:%M:%S", time.gmtime(t)))
+    # And just to see
+    with open("data/updatelog", "a") as fp:
+      f.write(
+        f"{episode:8d}{step:8d}{epsilon:8d}"
+        f"{mean_ep_reward:12f}{mean_ep_distance:12f}{mean_ep_avg_loss:12f}{mean_ep_avg_q:12f}"
+        f"{t:12}"
+      )
+    
+    self.plot(n)
+
+  def plot(self, n):
+    for metric in ["ep_rewards", "ep_distance", "ep_avg_losses", "ep_avg_qs"]:
+      plt.plot(getattr(self, f"mean_{metrix}"), [i*n for i in range(1, len(self.mean_ep_rewards))])
+      plt.savefig(getattr(self, f"{metric}_plot"))
+      plt.clf()
 
 """
 TODO:
 average reward per episode
-win rate
+win rate (distance: 3161)
 average Q value / value estimates (log scale)
 """

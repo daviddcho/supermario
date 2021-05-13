@@ -19,7 +19,7 @@ class DQNAgent:
   def __init__(self):
     self.env = make_mario("SuperMarioBros-1-1-v0", COMPLEX_MOVEMENT)
   
-    self.n_episodes = hp.N_EPISODES 
+    self.n_episodes = hp.N_EPISODES+1
     self.alpha = hp.ALPHA 
     self.epsilon_start = hp.EPSILON_START 
     self.epsilon_final = hp.EPSILON_FINAL 
@@ -48,7 +48,7 @@ class DQNAgent:
     self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.alpha)
     self.replay_memory = ExperienceReplay(self.memory_size)
 
-    self.logger = Logger(self.n_episodes, self.epsilon_start, self.memory_size, self.batch_size)
+    self.logger = Logger()
    
   def update_model(self, minibatch):
     """
@@ -77,7 +77,10 @@ class DQNAgent:
     loss = nn.MSELoss()(q_value, td_target)
     loss.backward() 
     self.optimizer.step() 
-
+    
+    print("Q value", q_value) 
+    print("loss", loss) 
+    print(q_value.mean().item(), loss.item())
     return q_value.mean().item(), loss.item()
     
   def select_action(self, state): 
@@ -103,7 +106,7 @@ class DQNAgent:
     """
     Deep Double Q-Learning with Experience Replay
     """
-    step_index = 0
+    step = 0
     for episode in tqdm(range(self.n_episodes)):
       distance = 0
 
@@ -113,8 +116,8 @@ class DQNAgent:
         # you want a separate run for this
         #time.sleep(0.05)
         #self.env.render()
-        step_index += 1
-        self.epsilon = self.get_epsilon(step_index)
+        step += 1
+        self.epsilon = self.get_epsilon(step)
 
         action = self.select_action(current_state)
         next_state, reward, done, info = self.env.step(action)
@@ -127,10 +130,10 @@ class DQNAgent:
           continue
 
         # Sync target with main 
-        if (step_index % self.target_update_freq) == 0:
+        if (step % self.target_update_freq) == 0:
           self.target_model.load_state_dict(self.model.state_dict())
 
-        if (step_index % 4) == 0:
+        if (step % 4) == 0:
           minibatch = self.replay_memory.sample_batch(self.batch_size)
           q_value, loss = self.update_model(minibatch)
         else:
@@ -139,11 +142,11 @@ class DQNAgent:
         distance = max(info['x_pos'], distance)
         self.logger.log_step(reward, distance, q_value, loss)
         
+      self.logger.log_episode()
       if (episode % 10000) == 0 and episode != 0:
         torch.save(self.model.state_dict(), "model_%d.pth" % episode)
-      self.logger.log_episode()
+        self.logger.record(episode, self.epsilon, step) 
     
-    self.logger.record()
 
   def run(self):
     """
@@ -160,5 +163,5 @@ class DQNAgent:
       current_state = next_state
 
 agent = DQNAgent()
-#agent.train()
-agent.run()
+agent.train()
+#agent.run()
