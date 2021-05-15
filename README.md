@@ -2,6 +2,8 @@
 
 An implementation of a Double Deep Q Network to learn to play Super Mario Bros.
 
+![mario](/mario.png)
+
 ## Set Up 
 ```
 # Create virtual environment 
