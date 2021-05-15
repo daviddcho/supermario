@@ -73,11 +73,10 @@ class Logger():
     # And just to see
     with open("data/updatelog", "a") as fp:
       fp.write(
-        f"{episode:8d}{step:8d}{epsilon:8.3f}"
+        f"{episode:8d}{step:14d}{epsilon:8.3f}"
         f"{mean_ep_reward:12.3f}{mean_ep_distance:12.3f}{mean_ep_avg_loss:12.3f}{mean_ep_avg_q:12.3f}"
         f"{tf:>12}\n"
       )
-    
     self.plot(n)
 
   def plot(self, n):
