@@ -2,7 +2,9 @@
 
 An implementation of the Double Deep Q Network (DDQN) to learn to play Super Mario Bros.
 
-It takes ~30 hours of training to get 57% win rate. And training for more than 30 hours doesn't seem to increase that win rate showing the limitations of DDQN.
+It takes ~30 hours of training on a GPU to get a 60% win rate. Training for more than 30 hours doesn't seem to increase that win rate.
+
+Letting the agent explore for a longer period of time by slowing down epsilon decay might improve the win rate?
 
 ![mario](/mario.png)
 
@@ -31,9 +33,9 @@ deactivate
 ```
 
 ## Training graphs
-Distance vs # of episodes
+You can see that the reward and distance peak at episode 50,000 (30 hours of training) then stagnates.
+
 ![distance](/data/ep_distances_plot.png)
-Reward vs # of episodes
 ![distance](/data/ep_rewards_plot.png)
 
 ## Resources
