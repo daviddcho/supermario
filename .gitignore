@@ -1,6 +1,6 @@
 __pycache__
 env
-data
+log.pkl
 pretrained_models
 notes
 test.py
