@@ -26,14 +26,14 @@ deactivate
 ## Usage
 ```
 # Train the agent
-./mario train
+./mario.py train
 
 # Watch mario play 
-./mario play
+./mario.py play
 ```
 
 ## Training graphs
-You can see that the reward and distance peak at episode 50,000 (30 hours of training) then stagnates.
+You can see that the reward peak at episode 50,000 (30 hours of training) then stagnates.
 
 ![distance](/data/ep_rewards_plot.png)
 
