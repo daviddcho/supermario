@@ -13,10 +13,10 @@ from logger import Logger
 import hyperparameters as hp
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-print(device)
+print("device: ", device)
 
 class DQNAgent:
-  def __init__(self):
+  def __init__(self, LOAD):
     self.env = make_mario("SuperMarioBros-1-1-v0", COMPLEX_MOVEMENT)
   
     self.n_episodes = hp.N_EPISODES+1
@@ -37,19 +37,18 @@ class DQNAgent:
 
     self.model = DQN(self.input_shape, self.n_actions).to(device)
     self.target_model = DQN(self.input_shape, self.n_actions).to(device)
-
-    # if you want to load and watch
-    if hp.LOAD:
-      self.model.load_state_dict(torch.load("pretrained_models/pretrained_39900_model.pth"))
-      self.target_model.load_state_dict(self.model.state_dict())
-      self.epsilon_start = self.epsilon_final
-      self.model.eval()
-
     self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.alpha)
-    self.replay_memory = ExperienceReplay(self.memory_size)
 
+    self.replay_memory = ExperienceReplay(self.memory_size)
     self.logger = Logger()
-   
+
+  def load(self, file):
+    self.model.load_state_dict(torch.load(file))
+    self.target_model.load_state_dict(self.model.state_dict())
+    self.epsilon_start = self.epsilon_final
+    self.model.eval()
+    self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.alpha)
+
   def update_model(self, minibatch):
     """
     Calculate Mean Square Error (MSE) between actual values and expected values from Deep Q-Network
@@ -160,6 +159,4 @@ class DQNAgent:
       next_state, reward, done, _ = self.env.step(action)
       current_state = next_state
 
-agent = DQNAgent()
-agent.train()
-#agent.play()
+

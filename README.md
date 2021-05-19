@@ -21,15 +21,16 @@ deactivate
 
 ## Usage
 ```
-# Watch it play 
-python3 demo.py
-
 # Train the agent
-python3 agent.py
+./mario train
+
+# Watch mario play 
+./mario play
 ```
 
 ## Resources
 * Playing Atari with Deep Reinforcement Learning: https://arxiv.org/abs/1312.5602
 * Deep Reinforcement Learning with Double Q-learning: https://arxiv.org/abs/1509.06461
+* Intro to Reinforcement Learning with David Silver: https://youtube.com/playlist?list=PLqYmG7hTraZBiG_XpjnPrSNw-1XQaM_gB
 * Neural Networks from 3Blue1Brown: https://youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi 
 * Conv Nets: A Modular Perspective: https://colah.github.io/posts/2014-07-Conv-Nets-Modular/
