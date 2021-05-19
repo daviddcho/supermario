@@ -1,6 +1,8 @@
 # Super Mario Bros
 
-An implementation of a Double Deep Q Network to learn to play Super Mario Bros.
+An implementation of the Double Deep Q Network (DDQN) to learn to play Super Mario Bros.
+
+It takes ~30 hours of training to get 57% win rate. And training for more than 30 hours doesn't seem to increase that win rate showing the limitations of DDQN.
 
 ![mario](/mario.png)
 
@@ -27,6 +29,12 @@ deactivate
 # Watch mario play 
 ./mario play
 ```
+
+## Training graphs
+Distance vs # of episodes
+![distance](/data/ep_distances_plot.png)
+Reward vs # of episodes
+![distance](/data/ep_rewards_plot.png)
 
 ## Resources
 * Playing Atari with Deep Reinforcement Learning: https://arxiv.org/abs/1312.5602
