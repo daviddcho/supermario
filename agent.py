@@ -16,10 +16,10 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print("device: ", device)
 
 class DQNAgent:
-  def __init__(self, LOAD):
+  def __init__(self):
     self.env = make_mario("SuperMarioBros-1-1-v0", COMPLEX_MOVEMENT)
   
-    self.n_episodes = hp.N_EPISODES+1
+    self.n_episodes = hp.N_EPISODES
     self.alpha = hp.ALPHA 
     self.epsilon_start = hp.EPSILON_START 
     self.epsilon_final = hp.EPSILON_FINAL 

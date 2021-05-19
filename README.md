@@ -6,7 +6,7 @@ It takes ~30 hours of training on a GPU to get a 60% win rate. Training for more
 
 Letting the agent explore for a longer period of time by slowing down epsilon decay might improve the win rate?
 
-![mario](/mario.png)
+![demo](/demo.gif)
 
 ## Set Up 
 ```
@@ -35,8 +35,9 @@ deactivate
 ## Training graphs
 You can see that the reward and distance peak at episode 50,000 (30 hours of training) then stagnates.
 
-![distance](/data/ep_distances_plot.png)
 ![distance](/data/ep_rewards_plot.png)
+
+More plots can be found at `data/`
 
 ## Resources
 * Playing Atari with Deep Reinforcement Learning: https://arxiv.org/abs/1312.5602
