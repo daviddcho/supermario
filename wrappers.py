@@ -2,7 +2,6 @@
 Code from OpenAI baseline
 https://github.com/openai/baselines/blob/master/baselines/common/atari_wrappers.py
 '''
-
 import numpy as np
 import os
 os.environ.setdefault('PATH', '')
@@ -16,7 +15,6 @@ from gym.wrappers import TimeLimit
 import gym_super_mario_bros
 from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 from nes_py.wrappers import JoypadSpace
-
 
 class NoopResetEnv(gym.Wrapper):
   def __init__(self, env, noop_max=30):
@@ -342,4 +340,3 @@ processed frame.. Box(0, 255, (84, 84, 1), uint8)
 framed to pytorch.. Box(0.0, 1.0, (1, 84, 84), float32)
 framed buffer.. Box(0.0, 1.0, (4, 84, 84), float32)
 normalized.. Box(0.0, 1.0, (4, 84, 84), float32)
-"""

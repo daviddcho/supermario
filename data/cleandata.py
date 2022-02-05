@@ -1,5 +1,4 @@
 import string
-
 data = open("marios_run.txt", "r")
 cdata = open("marios_run_clean.txt", "a")
 

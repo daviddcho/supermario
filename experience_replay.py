@@ -29,4 +29,4 @@ class ExperienceReplay:
     """
     indices = np.random.choice(len(self.memory), batch_size, replace=False)
     states, actions, rewards, next_states, dones = zip(*[self.memory[i] for i in indices])
-    return np.array(states), np.array(actions), np.array(rewards, dtype=np.float32) ,np.array(next_states),  np.array(dones, dtype=np.uint8)
+    return np.array(states), np.array(actions), np.array(rewards, dtype=np.float32), np.array(next_states), np.array(dones, dtype=np.uint8)

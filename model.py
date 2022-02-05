@@ -2,7 +2,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-
 class DQN(nn.Module):
   """
   Deep Q Network from https://arxiv.org/abs/1312.5602

@@ -4,7 +4,6 @@ import numpy as np
 import time
 from hyperparameters import TARGET_UPDATE_FREQ 
      
-
 class Logger():
   def __init__(self):
     self.ep_rewards = []

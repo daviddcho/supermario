@@ -33,11 +33,11 @@ class DQNAgent:
 
     self.input_shape = self.env.observation_space.shape
     self.n_actions = self.env.action_space.n
-    print(self.input_shape, self.n_actions)
 
     self.model = DQN(self.input_shape, self.n_actions).to(device)
     self.target_model = DQN(self.input_shape, self.n_actions).to(device)
     self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.alpha)
+    self.loss_function = nn.MSELoss() 
 
     self.replay_memory = ExperienceReplay(self.memory_size)
     self.logger = Logger()
@@ -69,18 +69,15 @@ class DQNAgent:
     q_value = q_values.gather(1, actions.long().unsqueeze(-1)).squeeze(-1)
     next_q_value = next_q_values.max(1)[0] 
 
-    # Sets the gradients to zero before backprop so gradients dont accumulate?
+    # Set the gradients to zero before backprop so gradients dont accumulate?
     self.optimizer.zero_grad() 
 
     # Perform stochastic gradient descent
     td_target = next_q_value * self.gamma + rewards
-    loss = nn.MSELoss()(q_value, td_target)
+    loss = self.loss_function(q_value, td_target)
     loss.backward() 
     self.optimizer.step() 
-    
-    #print("Q value", q_value) 
-    #print("loss", loss) 
-    #print(q_value.mean().item(), loss.item())
+
     return q_value.mean().item(), loss.item()
     
   def select_action(self, state): 
