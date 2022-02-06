@@ -32,7 +32,7 @@ deactivate
 ./mario.py play
 ```
 
-## Training graphs
+## Graph
 You can see that the reward peak at episode 50,000 (30 hours of training) then stagnates.
 
 ![distance](/data/ep_rewards_plot.png)

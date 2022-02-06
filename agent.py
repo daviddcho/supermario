@@ -56,29 +56,27 @@ class DQNAgent:
     Then perform stochasitc gradient descent
     """
     states, actions, rewards, next_states, _ = minibatch
-    
+
     states = tensor(states).to(device) 
     next_states = tensor(next_states).to(device)
     actions = tensor(actions).to(device) 
     rewards = tensor(rewards).to(device) 
 
-    q_values = self.model(states)
-    next_q_values = self.target_model(next_states)
+    Q = self.model(states)
+    target_Q = self.target_model(next_states)
    
-    # q values for all actions, gather(dim=1, tensor index)
-    q_value = q_values.gather(1, actions.unsqueeze(-1)).squeeze(-1)
-    next_q_value = next_q_values.max()
+    # Get Q-values of actions taken for each state
+    Q = Q.gather(1, actions.unsqueeze(-1)).squeeze(-1)
+    target_Q = target_Q.max()
 
-    # Set the gradients to zero before backprop so gradients dont accumulate?
+    # Perform SGD
+    td_target = target_Q * self.gamma + rewards
+    loss = self.loss_function(Q, td_target)
     self.optimizer.zero_grad() 
-
-    # Perform stochastic gradient descent
-    td_target = next_q_value * self.gamma + rewards
-    loss = self.loss_function(q_value, td_target)
     loss.backward() 
     self.optimizer.step() 
 
-    return q_value.mean().item(), loss.item()
+    return Q.mean().item(), loss.item()
     
   def select_action(self, state): 
     """
