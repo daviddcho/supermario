@@ -67,7 +67,7 @@ class DQNAgent:
    
     # Get Q-values of actions taken for each state
     Q = Q.gather(1, actions.unsqueeze(-1)).squeeze(-1)
-    target_Q = target_Q.max()
+    target_Q = target_Q.amax(1)
 
     # Perform SGD
     td_target = target_Q * self.gamma + rewards
