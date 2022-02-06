@@ -1,4 +1,5 @@
 import torch 
+from torch import tensor, optim
 import torch.nn as nn
 import cv2
 import math
@@ -36,7 +37,7 @@ class DQNAgent:
 
     self.model = DQN(self.input_shape, self.n_actions).to(device)
     self.target_model = DQN(self.input_shape, self.n_actions).to(device)
-    self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.alpha)
+    self.optimizer = optim.Adam(self.model.parameters(), lr=self.alpha)
     self.loss_function = nn.MSELoss() 
 
     self.replay_memory = ExperienceReplay(self.memory_size)
@@ -47,27 +48,26 @@ class DQNAgent:
     self.target_model.load_state_dict(self.model.state_dict())
     self.epsilon_start = self.epsilon_final
     self.model.eval()
-    self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.alpha)
+    self.optimizer = optim.Adam(self.model.parameters(), lr=self.alpha)
 
   def update_model(self, minibatch):
     """
     Calculate Mean Square Error (MSE) between actual values and expected values from Deep Q-Network
     Then perform stochasitc gradient descent
     """
-    states, actions, rewards, next_states, dones = minibatch
+    states, actions, rewards, next_states, _ = minibatch
     
-    states = torch.tensor(states).to(device) 
-    next_states = torch.tensor(next_states).to(device)
-    actions = torch.tensor(actions).to(device) 
-    rewards = torch.tensor(rewards).to(device) 
-    done = torch.ByteTensor(dones).to(device)
+    states = tensor(states).to(device) 
+    next_states = tensor(next_states).to(device)
+    actions = tensor(actions).to(device) 
+    rewards = tensor(rewards).to(device) 
 
     q_values = self.model(states)
     next_q_values = self.target_model(next_states)
-    
-    # look into this
-    q_value = q_values.gather(1, actions.long().unsqueeze(-1)).squeeze(-1)
-    next_q_value = next_q_values.max(1)[0] 
+   
+    # q values for all actions, gather(dim=1, tensor index)
+    q_value = q_values.gather(1, actions.unsqueeze(-1)).squeeze(-1)
+    next_q_value = next_q_values.max()
 
     # Set the gradients to zero before backprop so gradients dont accumulate?
     self.optimizer.zero_grad() 
@@ -88,9 +88,9 @@ class DQNAgent:
       action = self.env.action_space.sample()
     else:
       # Pick best action with DQN 
-      state = torch.FloatTensor(np.float32(state)).unsqueeze(0).to(device)
+      state = tensor(np.float32(state)).unsqueeze(0).to(device)
       q_value = self.model(state)
-      action = q_value.max(1)[1].item()
+      action = q_value.argmax().item()
     return action
 
   def get_epsilon(self, t):
@@ -141,7 +141,6 @@ class DQNAgent:
         torch.save(self.model.state_dict(), "pretrained_models/model_%d.pth" % episode)
         self.logger.record(episode, self.epsilon, step) 
     
-
   def play(self):
     """
     When you want to watch Mario play
@@ -155,5 +154,4 @@ class DQNAgent:
       action = self.select_action(current_state) 
       next_state, reward, done, _ = self.env.step(action)
       current_state = next_state
-
 
