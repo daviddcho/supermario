@@ -8,7 +8,15 @@ Letting the agent explore for a longer period of time by slowing down epsilon de
 
 ![demo](/demo.gif)
 
+
 ## Set Up 
+Unless you have python 3.8 on your computer, I recommend running this with Docker.
+
+```
+docker build -t mario-rl .
+docker run -it mario-rl ./mario.py play
+```
+
 ```
 # Create virtual environment 
 python3 -m venv env
