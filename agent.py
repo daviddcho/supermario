@@ -1,4 +1,4 @@
-import torch 
+import torch
 from torch import tensor, optim
 import torch.nn as nn
 import cv2
@@ -7,7 +7,7 @@ import numpy as np
 import time
 from tqdm import tqdm
 
-from model import DQN
+from model import DuelingDQN
 from wrappers import *
 from experience_replay import ExperienceReplay, Experience
 from logger import Logger
@@ -46,8 +46,8 @@ class DQNAgent:
     self.input_shape = self.env.observation_space.shape
     self.n_actions = self.env.action_space.n
 
-    self.model = DQN(self.input_shape, self.n_actions).to(device)
-    self.target_model = DQN(self.input_shape, self.n_actions).to(device)
+    self.model = DuelingDQN(self.input_shape, self.n_actions).to(device)
+    self.target_model = DuelingDQN(self.input_shape, self.n_actions).to(device)
     self.optimizer = optim.Adam(self.model.parameters(), lr=self.alpha)
     self.loss_function = nn.MSELoss() 
 
@@ -93,7 +93,7 @@ class DQNAgent:
     """
     Picks action with epsilon-greedy policy
     """
-    if np.random.random() < self.epsilon:
+    if False:#np.random.random() < self.epsilon:
       action = self.env.action_space.sample()
     else:
       # Pick best action with DQN 
