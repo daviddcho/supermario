@@ -14,7 +14,8 @@ Unless you have python 3.8 on your computer, I recommend running this with Docke
 
 ```
 docker build -t mario-rl .
-docker run -it mario-rl ./mario.py play
+docker run -it --rm -e OPENBLAS_NUM_THREADS=1 -v $(pwd):/app -w /app mario-rl ./mario.py play
+docker run --gpus all -it --rm -v $(pwd):/app -w /app mario-rl ./mario.py train
 ```
 
 ```

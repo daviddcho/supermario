@@ -14,28 +14,25 @@ from logger import Logger
 import hyperparameters as hp
 
 def ascii_render(rgb):
-    grayscale = rgb.mean(axis=2)  # average over RGB
-    chars = " .:-=+*#%@"
-    step = 256 // len(chars)
-    frame = ""
-    for row in grayscale[::8]:  # downsample vertically
-        line = "".join(chars[min(len(chars) - 1, int(val) // step)] for val in row[::6])
-        frame += line + "\n"
-    print("\033c", end="")  # clear screen
-    print(frame)
+  grayscale = rgb.mean(axis=2)  # average over RGB
+  chars = " .:-=+*#%@"
+  step = 256 // len(chars)
+  frame = ""
+  for row in grayscale[::8]:  # downsample vertically
+    line = "".join(chars[min(len(chars) - 1, int(val) // step)] for val in row[::6])
+    frame += line + "\n"
+  print("\033c", end="")  # clear screen
+  print(frame)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print("device: ", device)
 
 class DQNAgent:
   def __init__(self):
-    self.env = make_mario("SuperMarioBros-1-1-v0", COMPLEX_MOVEMENT)
+    self.env = make_mario("SuperMarioBros-1-1-v3", COMPLEX_MOVEMENT)
   
     self.n_episodes = hp.N_EPISODES
     self.alpha = hp.ALPHA 
-    self.epsilon_start = hp.EPSILON_START 
-    self.epsilon_final = hp.EPSILON_FINAL 
-    self.epsilon = hp.EPSILON_START
     self.gamma = hp.GAMMA 
     self.decay = hp.DECAY 
     self.memory_size = hp.MEMORY_SIZE 
@@ -57,7 +54,6 @@ class DQNAgent:
   def load(self, file):
     self.model.load_state_dict(torch.load(file, map_location=torch.device(device)))
     self.target_model.load_state_dict(self.model.state_dict())
-    self.epsilon_start = self.epsilon_final
     self.model.eval()
     self.optimizer = optim.Adam(self.model.parameters(), lr=self.alpha)
 
@@ -93,21 +89,12 @@ class DQNAgent:
     """
     Picks action with epsilon-greedy policy
     """
-    if False:#np.random.random() < self.epsilon:
-      action = self.env.action_space.sample()
-    else:
-      # Pick best action with DQN 
-      state = tensor(np.float32(state)).unsqueeze(0).to(device)
-      q_value = self.model(state)
-      action = q_value.argmax().item()
+    # Pick best action with DQN 
+    state = tensor(np.float32(state)).unsqueeze(0).to(device)
+    q_value = self.model(state)
+    action = q_value.argmax().item()
     return action
 
-  def get_epsilon(self, t):
-    """
-    Returns value of epsilon. Epsilon declines as we advance in steps
-    """
-    return self.epsilon_final + (self.epsilon_start - self.epsilon_final) * math.exp(-1 * ((t + 1) / self.decay))
-    
   def train(self):
     """
     Deep Double Q-Learning with Experience Replay
@@ -120,7 +107,6 @@ class DQNAgent:
       done = False 
       while not done:
         step += 1
-        self.epsilon = self.get_epsilon(step)
 
         action = self.select_action(current_state)
         next_state, reward, done, info = self.env.step(action)
@@ -148,13 +134,12 @@ class DQNAgent:
       self.logger.log_episode()
       if (episode % self.target_update_freq) == 0 and episode != 0:
         torch.save(self.model.state_dict(), "pretrained_models/model_%d.pth" % episode)
-        self.logger.record(episode, self.epsilon, step) 
+        self.logger.record(episode, 1, step) 
     
   def play(self):
     """
     When you want to watch Mario play
     """
-    self.epsilon = self.get_epsilon(1)
     current_state = self.env.reset()
     done = False
     while not done:    
