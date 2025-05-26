@@ -13,17 +13,6 @@ from experience_replay import ExperienceReplay, Experience
 from logger import Logger
 import hyperparameters as hp
 
-def ascii_render(rgb):
-  grayscale = rgb.mean(axis=2)  # average over RGB
-  chars = " .:-=+*#%@"
-  step = 256 // len(chars)
-  frame = ""
-  for row in grayscale[::8]:  # downsample vertically
-    line = "".join(chars[min(len(chars) - 1, int(val) // step)] for val in row[::6])
-    frame += line + "\n"
-  print("\033c", end="")  # clear screen
-  print(frame)
-
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print("device: ", device)
 
@@ -140,6 +129,17 @@ class DQNAgent:
     """
     When you want to watch Mario play
     """
+    def ascii_render(rgb):
+      grayscale = rgb.mean(axis=2)  # average over RGB
+      chars = " .:-=+*#%@"
+      step = 256 // len(chars)
+      frame = ""
+      for row in grayscale[::8]:  # downsample vertically
+        line = "".join(chars[min(len(chars) - 1, int(val) // step)] for val in row[::6])
+        frame += line + "\n"
+      print("\033c", end="")  # clear screen
+      print(frame)
+
     current_state = self.env.reset()
     done = False
     while not done:    
