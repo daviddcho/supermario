@@ -48,9 +48,9 @@ class Logger():
     # Reset
     self.init_episode()
     
-  def record(self, episode, epsilon, step):
+  def record(self, episode, step):
     n = TARGET_UPDATE_FREQ
-    mean_ep_reward = np.round(np.mean(self.ep_rewards[-n:]), 3)
+    mean_ep_reward = float(np.round(np.mean(self.ep_rewards[-n:]), 3))
     mean_ep_distance = np.round(np.mean(self.ep_distances[-n:]), 3)
     mean_ep_avg_loss = np.round(np.mean(self.ep_avg_losses[-n:]), 3) 
     mean_ep_avg_q = np.round(np.mean(self.ep_avg_qs[-n:]), 3)
@@ -69,10 +69,14 @@ class Logger():
     with open(filename, 'wb') as wfp:
       pickle.dump(log, wfp)
 
+    #print('in logger', type(episode), type(step))
+    #print("ep_rewards[-n:]", self.ep_rewards[-n:])
+    #print("mean_ep_reward raw:", np.mean(self.ep_rewards[-n:]))
+
     # And just to see
     with open("data/updatelog", "a") as fp:
       fp.write(
-        f"{episode:8d}{step:14d}{epsilon:8.3f}"
+        f"{episode:8d}{step:14d}"
         f"{mean_ep_reward:12.3f}{mean_ep_distance:12.3f}{mean_ep_avg_loss:12.3f}{mean_ep_avg_q:12.3f}"
         f"{tf:>12}\n"
       )
