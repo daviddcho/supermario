@@ -23,8 +23,10 @@ def actor_fn(i, shared_model, replay_buffer, distance_log, env_name, device):
   local_model.load_state_dict(shared_model.state_dict())
   local_model.eval()
 
+  step_count = 0
   current_state = env.reset()
   while True:
+    step_count += 1
     with torch.no_grad():
       x = tensor(current_state, dtype=torch.float32).unsqueeze(0) / 255.0
       local_model.reset_noise()
@@ -42,7 +44,7 @@ def actor_fn(i, shared_model, replay_buffer, distance_log, env_name, device):
     if len(replay_buffer) > hp.MEMORY_SIZE:
       replay_buffer.pop(0)
 
-    if random.random() < 0.01:
+    if step_count % 200 == 0:
       local_model.load_state_dict(shared_model.state_dict())
 
 def learner_fn(shared_model, target_model, replay_buffer, distance_log, env_name, device):
@@ -83,7 +85,7 @@ def learner_fn(shared_model, target_model, replay_buffer, distance_log, env_name
     optimizer.step() 
 
     # Periodically update target
-    if random.random() < 0.01:
+    if ep % 100 == 0:
       target_model.load_state_dict(shared_model.state_dict())
 
     if (ep % 1000) == 0 and ep != 0:
