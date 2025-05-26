@@ -82,6 +82,7 @@ def learner_fn(shared_model, target_model, replay_buffer, distance_log, env_name
       target_model.load_state_dict(shared_model.state_dict())
 
     if (ep % 10) == 0 and ep != 0:
+      torch.save(shared_model.state_dict(), "pretrained_models/model_%d.pth" % episode)
       with open("data/async_distance_log", "a") as f:
         f.write(f"{ep},{np.mean(distance_log[-50:])}\n")
 
