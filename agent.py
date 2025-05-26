@@ -80,8 +80,9 @@ class DQNAgent:
     """
     # Pick best action with DQN 
     state = tensor(np.float32(state)).unsqueeze(0).to(device)
-    q_value = self.model(state)
-    action = q_value.argmax().item()
+    with torch.no_grad():
+      q_value = self.model(state)
+      action = q_value.argmax().item()
     return action
 
   def train(self):
