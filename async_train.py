@@ -63,7 +63,7 @@ def learner_fn(shared_model, target_model, replay_buffer, distance_log, env_name
     states = tensor(np.stack(states)).to(device)
     actions = tensor(actions, dtype=torch.int64).to(device)
     next_states = tensor(np.stack(next_states)).to(device)
-    rewards = tensor(np.clip(reward, -1, 1), dtype=torch.float32).to(device)
+    rewards = tensor(np.clip(rewards, -1, 1), dtype=torch.float32).to(device)
     dones = tensor(dones, dtype=torch.float32).to(device)
 
     shared_model.reset_noise()
