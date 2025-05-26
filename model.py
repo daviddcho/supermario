@@ -58,6 +58,11 @@ class DuelingDQN(nn.Module):
       NoisyLinear(512, n_actions)
     )
 
+  def reset_noise(self):
+    for module in self.modules():
+      if isinstance(module, NoisyLinear):
+        module.reset_noise()
+
   def forward(self, x):
     x = self.feature(x / 255.0)
     value = self.value_stream(x)
