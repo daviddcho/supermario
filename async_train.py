@@ -54,6 +54,7 @@ def learner_fn(shared_model, target_model, replay_buffer, distance_log, env_name
   optimizer = optim.Adam(shared_model.parameters(), lr=hp.ALPHA)
   loss_function = nn.MSELoss()
 
+  shared_model.train()
   while len(replay_buffer) < hp.MIN_EXP:
     print(f"Waiting for replay buffer: {len(replay_buffer)}/{hp.MIN_EXP}")
     time.sleep(1)

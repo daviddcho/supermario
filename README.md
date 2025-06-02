@@ -55,3 +55,5 @@ More plots can be found at `data/`
 * Intro to Reinforcement Learning with David Silver: https://youtube.com/playlist?list=PLqYmG7hTraZBiG_XpjnPrSNw-1XQaM_gB
 * Neural Networks from 3Blue1Brown: https://youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi 
 * Conv Nets: A Modular Perspective: https://colah.github.io/posts/2014-07-Conv-Nets-Modular/
+* Rainbow: https://arxiv.org/pdf/1710.02298
+* Asynchronous Methods of Deep RL: https://arxiv.org/pdf/1710.02298
